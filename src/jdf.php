@@ -271,16 +271,16 @@ function jstrftime($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehr
                 break;
 
             case 'u':
-                $out .= $date[6] + 1;
+                $out .= ($date[6] ?? 0) + 1;
                 break;
 
             case 'w':
-                $out .= ($date[6] == 6) ? 0 : $date[6] + 1;
+                $out .= ($date[6] == 6) ? 0 : ($date[6] ?? 0) + 1;
                 break;
 
             /* Week */
             case 'U':
-                $avs = (($date[6] < 5) ? $date[6] + 2 : $date[6] - 5) - ($doy % 7);
+                $avs = (($date[6] < 5) ? ($date[6] ?? 0) + 2 : $date[6] - 5) - ($doy % 7);
                 if ($avs < 0) $avs += 7;
                 $num = (int)(($doy + $avs) / 7) + 1;
                 if ($avs > 3 or $avs == 1) $num--;
@@ -288,21 +288,21 @@ function jstrftime($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehr
                 break;
 
             case 'V':
-                $avs = (($date[6] == 6) ? 0 : $date[6] + 1) - ($doy % 7);
+                $avs = (($date[6] == 6) ? 0 : ($date[6] ?? 0) + 1) - ($doy % 7);
                 if ($avs < 0) $avs += 7;
-                $num = (int)(($doy + $avs) / 7);
-                if ($avs < 4) {
+                $num = (int)((($doy) + ($avs)) / 7);
+                if (($avs) < 4) {
                     $num++;
                 } elseif ($num < 1) {
                     $num = ($avs == 4 or $avs == ((((($j_y % 33) % 4) - 2) == ((int)(($j_y % 33) * 0.05))) ? 5 : 4)) ? 53 : 52;
                 }
-                $aks = $avs + $kab;
+                $aks = ($avs) + ($kab);
                 if ($aks == 7) $aks = 0;
                 $out .= (($kab + 363 - $doy) < $aks and $aks < 3) ? '01' : (($num < 10) ? '0' . $num : $num);
                 break;
 
             case 'W':
-                $avs = (($date[6] == 6) ? 0 : $date[6] + 1) - ($doy % 7);
+                $avs = (($date[6] == 6) ? 0 : ($date[6] ?? 0) + 1) - ($doy % 7);
                 if ($avs < 0) $avs += 7;
                 $num = (int)(($doy + $avs) / 7) + 1;
                 if ($avs > 3) $num--;
@@ -330,13 +330,13 @@ function jstrftime($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehr
                 break;
 
             case 'g':
-                $jdw = ($date[6] == 6) ? 0 : $date[6] + 1;
+                $jdw = ($date[6] == 6) ? 0 : ($date[6] ?? 0) + 1;
                 $dny = 364 + $kab - $doy;
                 $out .= substr(($jdw > ($doy + 3) and $doy < 3) ? $j_y - 1 : (((3 - $dny) > $jdw and $dny < 3) ? $j_y + 1 : $j_y), 2, 2);
                 break;
 
             case 'G':
-                $jdw = ($date[6] == 6) ? 0 : $date[6] + 1;
+                $jdw = ($date[6] == 6) ? 0 : ($date[6] ?? 0) + 1;
                 $dny = 364 + $kab - $doy;
                 $out .= ($jdw > ($doy + 3) and $doy < 3) ? $j_y - 1 : (((3 - $dny) > $jdw and $dny < 3) ? $j_y + 1 : $j_y);
                 break;
@@ -501,15 +501,15 @@ function jgetdate($timestamp = '', $none = '', $timezone = 'Asia/Tehran', $tn = 
 }
 
 /*	F	*/
-function jcheckdate($jm, $jd, $jy)
+function jcheckdate($jm, $jd, $jy): bool
 {
     list($jm, $jd, $jy) = explode('_', tr_num($jm . '_' . $jd . '_' . $jy));
-    $l_d = ($jm == 12 and ((($jy + 12) % 33) % 4) != 1) ? 29 : (31 - (int)($jm / 6.5));
+    $l_d = ($jm == 12 and (((($jy ?? 0) + 12) % 33) % 4) != 1) ? 29 : (31 - (int)($jm / 6.5));
     return ($jm > 12 or $jd > $l_d or $jm < 1 or $jd < 1 or $jy < 1) ? false : true;
 }
 
 /*	F	*/
-function tr_num($str, $mod = 'en', $mf = '٫')
+function tr_num($str, $mod = 'en', $mf = '٫'): array|string
 {
     $num_a = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.');
     $key_a = array('۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹', $mf);
