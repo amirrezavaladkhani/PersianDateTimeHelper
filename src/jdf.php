@@ -610,8 +610,8 @@ function gregorian_to_jalali($gy, $gm, $gd, $mod = ''): array|string
 {
     list($gy, $gm, $gd) = explode('_', tr_num($gy . '_' . $gm . '_' . $gd));/* <= Extra :اين سطر ، جزء تابع اصلي نيست */
     $g_d_m = array(0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334);
-    $gy2 = ($gm > 2) ? ($gy + 1) : $gy;
-    $days = 355666 + (365 * $gy) + ((int)(($gy2 + 3) / 4)) - ((int)(($gy2 + 99) / 100)) + ((int)(($gy2 + 399) / 400)) + $gd + $g_d_m[$gm - 1];
+    $gy2 = ($gm > 2) ? (($gy ?? 0) + 1) : $gy;
+    $days = 355666 + (365 * $gy) + ((int)(($gy2 + 3) / 4)) - ((int)(($gy2 + 99) / 100)) + ((int)(($gy2 + 399) / 400)) + ($gd ?? 0) + $g_d_m[$gm - 1];
     $jy = -1595 + (33 * ((int)($days / 12053)));
     $days %= 12053;
     $jy += 4 * ((int)($days / 1461));
@@ -635,7 +635,7 @@ function jalali_to_gregorian($jy, $jm, $jd, $mod = ''): array|string
 {
     list($jy, $jm, $jd) = explode('_', tr_num($jy . '_' . $jm . '_' . $jd));/* <= Extra :اين سطر ، جزء تابع اصلي نيست */
     $jy += 1595;
-    $days = -355668 + (365 * $jy) + (((int)($jy / 33)) * 8) + ((int)((($jy % 33) + 3) / 4)) + $jd + (($jm < 7) ? ($jm - 1) * 31 : (($jm - 7) * 30) + 186);
+    $days = -355668 + (365 * $jy) + (((int)($jy / 33)) * 8) + ((int)((($jy % 33) + 3) / 4)) + ($jd ?? 0) + (($jm < 7) ? ($jm - 1) * 31 : (($jm - 7) * 30) + 186);
     $gy = 400 * ((int)($days / 146097));
     $days %= 146097;
     if ($days > 36524) {
