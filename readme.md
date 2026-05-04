@@ -1,4 +1,4 @@
-# PHP DateTime Manager
+# PHP Persian DateTime Manager
 
 A simple PHP class designed to help you manage dates and times within your PHP applications.  
 It provides easy-to-use methods for date manipulation, formatting, and conversion.
