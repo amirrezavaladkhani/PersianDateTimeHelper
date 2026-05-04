@@ -18,10 +18,7 @@ class DateTimeHelper
      * @return float|int
      */
     public
-    function convertTimeToMinute(
-        string $time = '00:00',
-        string $separator = ':'
-    ): float|int
+    function convertTimeToMinute(string $time = '00:00', string $separator = ':'): float|int
     {
         $explodeTime = explode($separator, $time);
 
@@ -31,6 +28,37 @@ class DateTimeHelper
 
         return $result ?? 0;
     }
-    #endregion
 
+    /**
+     * convert minute format to time format
+     * @param int $time
+     * @param string $separator
+     * @return string
+     */
+    public
+    function convertMinuteToTime(int $time, string $separator = ':'): string
+    {
+        $hours = floor(abs($time) / 60);
+        $minutes = abs($time) % 60;
+
+        $formattedTime = $this->fixTwoDigitsNumber($hours) . $separator . $this->fixTwoDigitsNumber($minutes);
+
+        return $time < 0 ? '-' . $formattedTime : $formattedTime;
+    }
+    #endregion
+    #region Number Methods
+
+    /**
+     * Formats a number into a two-digit string, padding with a leading zero if necessary.
+     * Example: 1 => "01", 12 => "12"
+     * @param int $number
+     * @return string
+     */
+    public
+    function fixTwoDigitsNumber(int $number): string
+    {
+        return (strlen(strval($number)) == 1) ? '0' . $number : strval($number);
+    }
+
+    #endregion
 }
