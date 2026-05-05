@@ -99,6 +99,43 @@ class DateTimeHelper
 
         return 0;
     }
+
+    /**
+     * Checks whether two time intervals overlap.
+     * Each interval must contain exactly two time values in H:i format.
+     * If the start time is greater than the end time, the values are swapped automatically.
+     *
+     * @param array $searchInterval The first time interval as [startTime, endTime].
+     * @param array $comparisonInterval The second time interval as [startTime, endTime].
+     *
+     * @return bool Returns true if the two intervals overlap; otherwise, false.
+     */
+    public
+    function checkTimeRangeOverlap(array $searchInterval = ["00:00", "00:00"], array $comparisonInterval = ["00:00", "00:00"]): bool
+    {
+        if (count($searchInterval) !== 2 || count($comparisonInterval) !== 2) {
+            return false;
+        }
+
+        $s1 = DateTime::createFromFormat('H:i', $searchInterval[0]);
+        $e1 = DateTime::createFromFormat('H:i', $searchInterval[1]);
+        $s2 = DateTime::createFromFormat('H:i', $comparisonInterval[0]);
+        $e2 = DateTime::createFromFormat('H:i', $comparisonInterval[1]);
+
+        if (!$s1 || !$e1 || !$s2 || !$e2) {
+            return false;
+        }
+
+        if ($s1 > $e1) {
+            [$s1, $e1] = [$e1, $s1];
+        }
+
+        if ($s2 > $e2) {
+            [$s2, $e2] = [$e2, $s2];
+        }
+
+        return $s1 < $e2 && $s2 < $e1;
+    }
     #endregion
     #region Year Methods
     /**
