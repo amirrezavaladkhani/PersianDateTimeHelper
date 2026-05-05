@@ -48,6 +48,58 @@ class DateTimeHelper
         return $time < 0 ? '-' . $formattedTime : $formattedTime;
     }
     #endregion
+    #region Time Methods
+    /**
+     * Converts a time string in HH:MM format into its equivalent number of days.
+     * Supports negative time values and allows optional rounding of the result.
+     *
+     * @param string $time The time value in HH:MM format (e.g., "12:30" or "-05:15").
+     * @param bool $roundOutput Whether to round the result to 2 decimal places.
+     * @param float $hoursInDays The number of working hours that represent one day. Defaults to 24.
+     *
+     * @return float|int The calculated number of days, or 0 if the input format is invalid.
+     */
+    public
+    function convertTimeToDay(string $time = "00:00", bool $roundOutput = false, float $hoursInDays = 24): float|int
+    {
+        $isNegative = false;
+        if (str_starts_with($time, '-')) {
+            $isNegative = true;
+            $time = ltrim($time, '-');
+        }
+
+        if (!preg_match('/^\d{1,3}:\d{2}$/', $time)) {
+            return 0;
+        }
+
+        $explodeTime = explode(':', $time);
+
+        if (count($explodeTime) === 2) {
+            $hours = intval($explodeTime[0]);
+            $minutes = intval($explodeTime[1]);
+
+            if ($minutes < 0 || $minutes >= 60) {
+                return 0;
+            }
+
+            $totalHours = $hours + ($minutes / 60);
+
+            if ($isNegative) {
+                $totalHours *= -1;
+            }
+
+            $calculate = $totalHours / $hoursInDays;
+
+            if ($roundOutput) {
+                $calculate = round($calculate, 2);
+            }
+
+            return $calculate;
+        }
+
+        return 0;
+    }
+    #endregion
     #region Year Methods
     /**
      * Gets the timestamp for the first day of a given solar year.
@@ -134,6 +186,29 @@ class DateTimeHelper
         $month = ($month < 12 ? (intval($this->fixTwoDigitsNumber($month)) + 1) : 1);
         $year += ($month < 12 ? 0 : 1);
         return jmktime(0, 0, 0, $month, '01', $year) - (($returnExactTime) ? 1 : 86400);
+    }
+
+    /**
+     * Returns the total number of days in a given month and year.
+     * If the month or year is not provided, the current month and year are used.
+     *
+     * @param int|null $month The month (1–12). Defaults to the current month if null.
+     * @param int|null $year The year. Defaults to the current year if null.
+     *
+     * @return int|string The total number of days in the specified month (e.g., 31, 30, or 29).
+     */
+    public
+    function totalDaysOfMonth(int|null $month = null, int|null $year = null): int|string
+    {
+        if (is_null($month)) {
+            $month = jdate('n');
+        }
+
+        if (is_null($year)) {
+            $year = jdate("Y");
+        }
+
+        return jdate('t', $this->getFirstDayOfMonth($month, $year));
     }
     #endregion
     #region Number Methods
