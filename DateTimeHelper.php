@@ -262,4 +262,29 @@ class DateTimeHelper
     }
 
     #endregion
+    #region Timestamp Methods
+    /**
+     * Converts a Jalali (Persian) date string to a Unix timestamp.
+     * If the input format is invalid or conversion fails, returns today's timestamp.
+     *
+     * The input date must be in `Y/m/d` Jalali format (e.g., "1403/02/16").
+     * Internally, the date is converted to Gregorian using `jalali_to_gregorian()`
+     * and then passed to `strtotime()` to obtain the Unix timestamp.
+     *
+     * @param string $date The Jalali date string in `Y/m/d` format.
+     *
+     * @return int|false The Unix timestamp for the given date, or today's timestamp
+     *                   if conversion fails. May return false if `strtotime()` fails.
+     */
+    public
+    function convertPersianDateToTimestamp(string $date): false|int
+    {
+        $explode = explode('/', $date);
+        if (count($explode) == 3) {
+            $convertToGregorian = jalali_to_gregorian($explode[0], $explode[1], $explode[2], '/');
+            $output = strtotime($convertToGregorian);
+        }
+        return $output ?? strtotime('today');
+    }
+    #endregion
 }
