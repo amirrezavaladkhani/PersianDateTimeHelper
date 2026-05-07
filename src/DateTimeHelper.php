@@ -1,6 +1,6 @@
 <?php
 
-require_once "src/jdf.php";
+require_once "jdf.php";
 
 /**
  * @name DateTimeHelper
